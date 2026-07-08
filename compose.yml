@@ -1,0 +1,59 @@
+name: windor-verifications
+
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+    environment:
+      NODE_ENV: development
+
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: windor
+
+      PUPPETEER_EXECUTABLE_PATH: /usr/bin/chromium
+
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:17
+
+    ports:
+      - "5432:5432"
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: windor
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+
+    ports:
+      - "5050:80"
+
+    environment:
+      PGADMIN_DEFAULT_EMAIL: aws@cazarin.com
+      PGADMIN_DEFAULT_PASSWORD: CAZADMIN4ALL@CAZARIN.COM
+
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
